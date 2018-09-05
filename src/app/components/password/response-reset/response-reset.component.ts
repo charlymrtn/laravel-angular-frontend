@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JarvisService } from '../../../Services/jarvis.service';
+import { SnotifyService } from 'ng-snotify';
 
 @Component({
   selector: 'app-response-reset',
@@ -20,9 +21,11 @@ export class ResponseResetComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private Jarvis: JarvisService
+    private Jarvis: JarvisService,
+    private router: Router,
+    private notify: SnotifyService
   ) {
-    route.queryParams.subscribe(params => {
+      route.queryParams.subscribe(params => {
       this.form.resetToken = params['token']
     });
    }
@@ -31,7 +34,7 @@ export class ResponseResetComponent implements OnInit {
   }
 
   onSubmit(){
-    this.Jarvis.changePassword(this.form).subscribe(
+    this.Jarvis.resetPassword(this.form).subscribe(
       data => this.handleResponse(data),
       error => this.handleError(error)
     );
@@ -39,10 +42,23 @@ export class ResponseResetComponent implements OnInit {
 
   handleResponse(data){
 
+    let _router = this.router;
+
+    this.notify.confirm('Now login with new password','Done!',{
+      buttons: [
+        {text: 'Ok',
+        action: toster => {
+          _router.navigateByUrl('/login'),
+          this.notify.remove(toster.id)
+        }
+      },
+      ]
+    });
+
   }
 
   handleError(error){
-
+    this.error = error.error.errors;
   }
 
 }
