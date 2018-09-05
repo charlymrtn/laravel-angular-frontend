@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { JarvisService } from '../../Services/jarvis.service';
+import { TokenService } from '../../Services/token.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../../Services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,14 +18,19 @@ export class LoginComponent implements OnInit {
 
   public error = null;
 
-  constructor(private http:HttpClient) { }
+  constructor(
+    private Jarvis: JarvisService, 
+    private Token: TokenService, 
+    private router: Router,
+    private Auth: AuthService
+) { }
 
   ngOnInit() {
   }
 
   onSubmit() {
-    return this.http.post('http://localhost:8000/api/login',this.form).subscribe(
-      data => console.log(data),
+    this.Jarvis.login(this.form).subscribe(
+      data => this.handleResponse(data),
       error => this.handleError(error)
       
     );
@@ -30,6 +38,12 @@ export class LoginComponent implements OnInit {
 
   handleError(error){
     this.error = error.error.error;
+  }
+
+  handleResponse(data){
+    this.Token.handle(data.access_token);
+    this.Auth.changeStatus(true);
+    this.router.navigateByUrl('/profile');
   }
 
 }

@@ -13,6 +13,10 @@ import { ResponseResetComponent } from './components/password/response-reset/res
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 
+import { JarvisService } from './Services/jarvis.service';
+import { TokenService } from './Services/token.service';
+import { AuthService } from './Services/auth.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +33,7 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [JarvisService,TokenService,AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
