@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { JarvisService } from '../../../Services/jarvis.service';
+import { SnotifyService } from 'ng-snotify';
 
 @Component({
   selector: 'app-request-reset',
@@ -7,9 +9,29 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RequestResetComponent implements OnInit {
 
-  constructor() { }
+  public form = {
+    email: null
+  }
+
+  constructor(
+    private Jarvis: JarvisService,
+    private notify: SnotifyService 
+  ) { }
 
   ngOnInit() {
+  }
+
+  onSubmit(){
+    this.Jarvis.sendPasswordResetLink(this.form).subscribe(
+      data => this.handleResponse(data),
+      error => this.notify.error(error.error.error)
+    );
+  }
+
+  handleResponse(res){
+    console.log(res);
+    
+    this.form.email = null;
   }
 
 }
